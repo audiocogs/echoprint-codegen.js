@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../src/whitening.js"></script>
+        <script src="../lib/pcmdata.js"></script>
+        <script>
+            function handleFileSelect(evt) {
+                var file = document.forms['uploadData']['fileChooser'].files[0]
+                fileStream(file, decodePCM);
+            }
+
+            function fileStream(file, callback) {
+                var reader = new FileReader();
+                var pcm;
+
+                reader.onload = function () {
+                    pcm = reader.result;
+                    if (callback && typeof(callback) === "function") {
+                        callback(pcm);
+                    }
+                }
+
+                reader.onerror = function () {
+                    console.log("Error!");
+                }
+
+                reader.readAsBinaryString(file);
+            }
+
+            function decodePCM(data) {
+                var sampleRate = 11025;
+                var buffer = new Float32Array(Math.round(sampleRate * 20 / 8));
+                var pcm = PCMData.decodeFrame(data, 16, buffer)
+                whiten(pcm);
+            }
+
+            function whiten(pcm) {
+                var filter = new Whitening(pcm);
+                filter.compute();
+                whitened = filter.getWhitenedSamples();
+                numSamples = filter.getNumSamples();
+
+                console.log(numSamples + ' samples');
+                /*
+                for(var i = 0; i < numSamples; i++) {
+                    console.log(whitened[i]);
+                }
+                */
+
+            }
+
+            window.onload = function(){
+                document.getElementById('fileChooser').addEventListener('change', handleFileSelect, false);
+            }
+        </script>
+
+
+
+
+    </head>
+    <body>
+        <form id="uploadData">
+            <input type="file" id="fileChooser" />
+        </form>
+    </body>
+</html>
