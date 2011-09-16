@@ -28,7 +28,7 @@
 
             function decodePCM(data) {
                 var sampleRate = 11025;
-                var buffer = new Float32Array(sampleRate * 200);
+                var buffer = new Float32Array(sampleRate * 20 * 2);
                 var pcm = PCMData.decodeFrame(data, 16, buffer)
 
                 var worker = new Worker('echoprint-worker.js');

@@ -90,4 +90,3 @@ SubbandAnalysis.prototype.getMatrix = function() {
     return this.Data;
 };
 
-//exports.SubbandAnalysis = SubbandAnalysis;

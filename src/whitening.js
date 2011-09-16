@@ -103,4 +103,3 @@ Whitening.prototype.getNumSamples = function() {
     return this.samples.length;
 };
 
-//exports.Whitening = Whitening;
