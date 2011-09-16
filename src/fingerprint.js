@@ -279,7 +279,6 @@ Fingerprint.prototype.compute = function() {
 
 
     for(band=0;band<subbands;band++) {
-        console.log("Ohai. I'm trying to compute a fingerprint.");
         if (onset_counter_for_band[band]>2) {
             for(onset=0;onset<onset_counter_for_band[band]-2;onset++) {
                 // What time was this onset at?
@@ -316,12 +315,15 @@ Fingerprint.prototype.compute = function() {
                     time_delta0 = this.quantized_time_for_frame_delta(p[0][k]);
                     time_delta1 = this.quantized_time_for_frame_delta(p[1][k]);
                     // Create a key from the time deltas and the band index
-                    /* Util.memcpy(dst, dstOffset, src, srcOffset, length)
-                     * returns a new copy of dst with modified bytes */
-                    hash_material = Util.memcpy(hash_material, 0, time_delta0, 0, 2);
-                    hash_material = Util.memcpy(hash_material, 2, time_delta1, 0, 2);
-                    hash_material = Util.memcpy(hash_material, 4, band, 0, 1);
-                    hashed_code = Util.bitwiseAnd(Util.murmurhash3_32_gc(hash_material, HASH_SEED), HASH_BITMASK);
+                   // /* Util.memcpy(dst, dstOffset, src, srcOffset, length)
+                   //  * returns a new copy of dst with modified bytes */
+                   // hash_material = Util.memcpy(hash_material, 0, time_delta0, 0, 2);
+                   // hash_material = Util.memcpy(hash_material, 2, time_delta1, 0, 2);
+                   // hash_material = Util.memcpy(hash_material, 4, band, 0, 1);
+                   // hashed_code = Util.bitwiseAnd(Util.murmurhash3_32_gc(hash_material, HASH_SEED), HASH_BITMASK);
+
+                   // Dummy value
+                   hashed_code = 4;
 
                     // Set the code alongside the time of onset
                     this.codes.push(fpcode(time_for_onset_ms_quantized, hashed_code));

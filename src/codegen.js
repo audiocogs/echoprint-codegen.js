@@ -53,7 +53,7 @@ Codegen.prototype.createCodeString = function(codes) {
 }
 
 Codegen.prototype.compress = function(str) {
-    return Base64.encode(FlateStream(str).getBytes());
+    return Base64.encode(RawDeflate.deflate(str));
 }
 
 /*
