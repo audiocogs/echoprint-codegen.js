@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="../src/whitening.js"></script>
-        <script src="../src/subbandanalysis.js"></script>
-        <script src="../src/fingerprint.js"></script>
-        <script src="../src/codegen.js"></script>
-        <script src="../lib/pcmdata.js"></script>
-        <script src="../lib/base64.js"></script>
-        <script src="../lib/rawdeflate.js"></script>
-        <script>
+       <script src="../lib/pcmdata.js"></script>
+       <script>
             function handleFileSelect(evt) {
                 var file = document.forms['uploadData']['fileChooser'].files[0]
                 fileStream(file, decodePCM);
@@ -26,7 +20,7 @@
                 }
 
                 reader.onerror = function () {
-                    console.log("Error!");
+                    console.log("Error reading file!");
                 }
 
                 reader.readAsBinaryString(file);
@@ -36,31 +30,31 @@
                 var sampleRate = 11025;
                 var buffer = new Float32Array(sampleRate * 200);
                 var pcm = PCMData.decodeFrame(data, 16, buffer)
-                codegen(pcm);
-            }
 
-            function whiten(pcm) {
-                var filter = new Whitening(pcm);
-                filter.compute();
-                whitened = filter.getWhitenedSamples();
-                numSamples = filter.getNumSamples();
+                var worker = new Worker('echoprint-worker.js');
 
-                //console.log(numSamples + ' samples');
-            }
+                worker.addEventListener('message', function(e) {
+                    var response = e.data;
 
-            function codegen(pcm) {
-                var codegen = new Codegen(pcm, 20);
-                console.log(codegen.getCodeString());
+                    switch(response.type) {
+                        case 'fingerprint':
+                            console.log('Fingerprint: ', response.data);
+                            break;
+                        case 'progress':
+                            console.log(response.data);
+                            break;
+                        default:
+                            break;
+                    }
+                }, false);
+
+                worker.postMessage({'pcm': pcm}); // Start the computation
             }
 
             window.onload = function(){
                 document.getElementById('fileChooser').addEventListener('change', handleFileSelect, false);
             }
         </script>
-
-
-
-
     </head>
     <body>
         <form id="uploadData">

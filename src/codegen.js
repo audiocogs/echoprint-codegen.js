@@ -15,7 +15,9 @@ Codegen = function(pcm, start_offset) {
     whitening = new Whitening(pcm);
     whitening.compute();
 
-    /* 
+    reportProgress("Finished whitening");
+
+    /*
     AudioBufferInput *pAudio = new AudioBufferInput();
     pAudio->SetBuffer(pWhitening->getWhitenedSamples(), pWhitening->getNumSamples());
     */
@@ -24,12 +26,18 @@ Codegen = function(pcm, start_offset) {
     subbandanalysis = new SubbandAnalysis(audiobuffer);
     subbandanalysis.compute();
 
+    reportProgress("Finished subband analysis");
+
     fingerprint = new Fingerprint(subbandanalysis, start_offset);
     fingerprint.compute();
+
+    reportProgress("Finished fingerprinting");
 
     codes = fingerprint.getCodes()
     this.codestring = this.createCodeString(codes);
     this.numcodes = codes.length;
+
+    reportProgress("Finterprint codes compressed and ready");
 };
 
 Codegen.prototype.createCodeString = function(codes) {
